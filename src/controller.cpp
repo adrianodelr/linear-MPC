@@ -5,8 +5,7 @@ namespace LMPC {
 template<int n, int m, int hx>
 ControllerWeights<n,m,hx>::ControllerWeights(const Matrix<n,1>& Q_, 
                                              const Matrix<n,1>& Qf_, 
-                                             const Matrix<m,1>& R_, 
-                                             const size_t& hx){
+                                             const Matrix<m,1>& R_){
         Q.Fill(0.0);
         R.Fill(0.0);
         
@@ -17,7 +16,7 @@ ControllerWeights<n,m,hx>::ControllerWeights(const Matrix<n,1>& Q_,
             if (c==n-1) c=0;  
         }
         // Reference tracking final weights 
-        for (size_t i = nxh-n; i < nhx; i++){
+        for (size_t i = nhx-n; i < nhx; i++){
             Q(i,i) = Qf_(c,1);
             if (c==n-1) c=0;  
         }
