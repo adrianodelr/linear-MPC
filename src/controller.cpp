@@ -9,6 +9,7 @@ ControllerWeights<n,m,hx>::ControllerWeights(const Matrix<n,1>& Q_,
                                              const size_t& hx){
         Q.Fill(0.0);
         R.Fill(0.0);
+        
         size_t c = 0;   
         // Reference tracking weights 
         for (size_t i = 0; i < nhx-n; i++){
