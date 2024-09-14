@@ -10,7 +10,13 @@ namespace LMPC {
 template<int n, int m>
 class LTIModel {
     public:
-        LTIModel(const Matrix<n,n>& A_, const Matrix<n,m>& B_, const double& h_);
+        LTIModel(const Matrix<n,n>& A_, 
+                 const Matrix<n,m>& B_, 
+                 const double& h_)
+                    : A(A_),
+                      B(B_),
+                      h(h_) {};
+
     private:
         // State space matrices 
         Matrix<n,n> A;
