@@ -29,8 +29,9 @@ class PredictionMatrices {
     public:
         PredictionMatrices(const Matrix<n,n>& A_, 
                            const Matrix<n,m>& B_);
-        // Matrix<n,n> get_predmat_A();
-        // Matrix<n,m> get_predmat_B();
+
+        Matrix<static_cast<int>(n*hx),n> get_predmat_A();
+        Matrix<static_cast<int>(n*hx),static_cast<int>(m*hx)> get_predmat_B();
 
         // Tracking and control weights   
     private:
@@ -38,8 +39,17 @@ class PredictionMatrices {
         static constexpr int mhx = static_cast<int>(m*hx);
         
         Matrix<nhx,  n> Ap;
-        Matrix<mhx,mhx> Bp;
+        Matrix<nhx,mhx> Bp;
 };
+
+template<int m, int n, int k, int p>
+void insert_at(Matrix<m,n>& M, Matrix<k,p> SubM, int row, int col){
+    for (int i = 0; i < k; i++){
+        for (int j = col; j < p; j++){
+            M(row+i,col+j) = SubM(i,j); 
+        }
+    }
+}
 
 }
 

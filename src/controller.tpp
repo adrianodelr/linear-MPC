@@ -63,12 +63,17 @@ PredictionMatrices<n, m, hx>::PredictionMatrices(const Matrix<n,n>& A_,
     Matrix<n,n> PowA = A_;
     Matrix<n,n> PowAB;
     PowAB.Fill(0.0);
-
     for (int i = 0; i < hx; i++){
-        
+
+        Serial.print("Ap");
+        Serial.println(Ap);
+
+        insert_at(Ap, PowA, static_cast<int>(i*n), 0);
         // Ap.Submatrix<n,n>(static_cast<int>(i*n),0) = PowA;
 
-        RefMatrix<BLA::Matrix<nhx, n>, 4, 4> submatrix(Ap.Submatrix<4, 4>(0, 0));
+        Serial.print("Ap");
+        Serial.println(Ap);
+
 
         PowA *= A_; 
         
@@ -79,6 +84,7 @@ PredictionMatrices<n, m, hx>::PredictionMatrices(const Matrix<n,n>& A_,
                 for (int k = 1; k < i-j; i++){
                     PowAB *= A_;
                 }
+                insert_at(Bp, PowAB*B_, static_cast<int>(i*n), static_cast<int>(j*m));
                 // Bp.Submatrix<n, m>(static_cast<int>(i*n), static_cast<int>(j*m)) = PowAB*B_;
             }
         }
@@ -86,12 +92,14 @@ PredictionMatrices<n, m, hx>::PredictionMatrices(const Matrix<n,n>& A_,
 
 }; 
 
-// template<int n, int m, int hx>
-// Matrix<nhx,n> PredictionMatrices<n, m, hx>::get_predmat_A(){
-//     return Ap;
-// }
-// template<int n, int m, int hx>
-// Matrix<nhx,mhx> PredictionMatrices<n, m, hx>::get_predmat_B(){
-//     return Bp;
-// }
+template<int n, int m, int hx>
+Matrix<static_cast<int>(n*hx),n> PredictionMatrices<n, m, hx>::get_predmat_A(){
+    Serial.println("im here");
+    return Ap;
+}
+
+template<int n, int m, int hx>
+Matrix<static_cast<int>(n*hx),static_cast<int>(m*hx)> PredictionMatrices<n, m, hx>::get_predmat_B(){
+    return Bp;
+}
 }
