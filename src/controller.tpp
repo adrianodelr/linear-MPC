@@ -63,17 +63,11 @@ PredictionMatrices<n, m, hx>::PredictionMatrices(const Matrix<n,n>& A_,
     Matrix<n,n> PowA = A_;
     Matrix<n,n> PowAB;
     PowAB.Fill(0.0);
-    for (int i = 0; i < hx; i++){
 
-        Serial.print("Ap");
-        Serial.println(Ap);
+    for (int i = 0; i < hx; i++){
 
         insert_at(Ap, PowA, static_cast<int>(i*n), 0);
         // Ap.Submatrix<n,n>(static_cast<int>(i*n),0) = PowA;
-
-        Serial.print("Ap");
-        Serial.println(Ap);
-
 
         PowA *= A_; 
         
@@ -81,20 +75,19 @@ PredictionMatrices<n, m, hx>::PredictionMatrices(const Matrix<n,n>& A_,
             if(i>=j){                
                 
                 PowAB = A_;
-                for (int k = 1; k < i-j; i++){
+                for (int k = 1; k < i-j; k++){
                     PowAB *= A_;
                 }
                 insert_at(Bp, PowAB*B_, static_cast<int>(i*n), static_cast<int>(j*m));
                 // Bp.Submatrix<n, m>(static_cast<int>(i*n), static_cast<int>(j*m)) = PowAB*B_;
             }
         }
-    }                                                         
+    }
 
 }; 
 
 template<int n, int m, int hx>
 Matrix<static_cast<int>(n*hx),n> PredictionMatrices<n, m, hx>::get_predmat_A(){
-    Serial.println("im here");
     return Ap;
 }
 
