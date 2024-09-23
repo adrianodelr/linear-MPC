@@ -86,22 +86,17 @@ class CondensedMPC {
             if(alloc) {
                 delete weights;
                 delete PredMat;
-                delete QuadProg;
+                //  delete QuadProg;
             }
         }
 
-        Matrix<mhx, mhx, DType> get_P();
-        Matrix<mhx,   1, DType> get_q();
-
     private: 
-        void update_QP_matrices(const Matrix<static_cast<int>(n+m), 1, DType>& x);                             
+        void update_QP_matrices(const Matrix<na, 1, DType>& x);                             
 
         Matrix<nahx, 1, DType> xref; 
         ControllerWeights<n, m, hx, DType>* weights; 
         PredictionMatrices<na, m, hx, DType>* PredMat;
-        Matrix<mhx, mhx, DType> P;
-        Matrix<mhx,   1, DType> q;
-        QP<mhx,0,0>* QuadProg;
+        // QP<mhx,0,0>* QuadProg;
         LTIModel<n, m> model;        
         bool alloc;
 
