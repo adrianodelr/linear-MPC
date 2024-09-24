@@ -80,8 +80,8 @@ template<int n, int m, int hx, typename DType>
 void CondensedMPC<n, m, hx, DType>::update_QP_matrices(const Matrix<CondensedMPC<n, m, hx, DType>::na, 1, DType>& x,
                                                        const Matrix<CondensedMPC<n, m, hx, DType>::nahx,CondensedMPC<n, m, hx, DType>::na, DType>& Ap,
                                                        const Matrix<CondensedMPC<n, m, hx, DType>::nahx,CondensedMPC<n, m, hx, DType>::mhx, DType>& Bp,
-                                                       const Matrix<CondensedMPC<n, m, hx, DType>::nahx,CondensedMPC<n, m, hx, DType>::nahx, DType>& Q, 
-                                                       const Matrix<CondensedMPC<n, m, hx, DType>::mhx,CondensedMPC<n, m, hx, DType>::mhx, DType>& R){
+                                                       const DiagonalMatrix<CondensedMPC<n, m, hx, DType>::nahx, DType>& Q, 
+                                                       const DiagonalMatrix<CondensedMPC<n, m, hx, DType>::mhx, DType>& R){
     
     P = ~Bp*Q*Bp+R; 
     q = ~Bp*Q*(Ap*x - xref);    
@@ -133,34 +133,31 @@ void CondensedMPC<n, m, hx, DType>::build_prediction_matrices(Matrix<CondensedMP
 }
 
 template<int n, int m, int hx, typename DType>
-void CondensedMPC<n, m, hx, DType>::build_weight_matrices(Matrix<CondensedMPC<n, m, hx, DType>::nahx,CondensedMPC<n, m, hx, DType>::nahx, DType>& Q, 
-                                                          Matrix<CondensedMPC<n, m, hx, DType>::mhx,CondensedMPC<n, m, hx, DType>::mhx, DType>& R, 
+void CondensedMPC<n, m, hx, DType>::build_weight_matrices(DiagonalMatrix<CondensedMPC<n, m, hx, DType>::nahx, DType>& Q, 
+                                                          DiagonalMatrix<CondensedMPC<n, m, hx, DType>::mhx, DType>& R, 
                                                           const Matrix<n, 1, DType>& Q_, 
                                                           const Matrix<n, 1, DType>& Qf_, 
                                                           const Matrix<m, 1, DType>& R_){
-    Q.Fill(static_cast<DType>(0));
-    R.Fill(static_cast<DType>(0));
-
     size_t c = 0;   
     size_t na = n+m;
+    
     // Reference tracking weights 
     for (size_t i = 0; i < nahx-na; i++){
         if (c < n)
-            Q(i,i) = Q_(c);
+            Q.diagonal(i) = Q_(c);
         else 
-            Q(i,i) = static_cast<DType>(0.0);
+            Q.diagonal(i) = static_cast<DType>(0.0);
         if (c < na-1)
             c+=1;
         else
             c=0;
     };
-
     // Reference tracking final weights 
     for (size_t i = nahx-na; i < nahx; i++){
         if (c < n)
-            Q(i,i) = Qf_(c);
+            Q.diagonal(i) = Qf_(c);
         else 
-            Q(i,i) = static_cast<DType>(0.0);
+            Q.diagonal(i) = static_cast<DType>(0.0);
         if (c < na-1)
             c+=1;
         else
@@ -169,7 +166,7 @@ void CondensedMPC<n, m, hx, DType>::build_weight_matrices(Matrix<CondensedMPC<n,
 
     // Control effort weights 
     for (size_t i = 0; i < mhx; i++){
-        R(i,i) = R_(c);
+        R.diagonal(i) = R_(c);
         if (c < m-1)
             c+=1;
         else
@@ -211,15 +208,15 @@ CondensedMPC<n, m, hx, DType>::CondensedMPC(const LTIModel<n, m, DType>& model_,
     Serial.println(freeMemory());
 
     // Tracking and control weights   
-    Matrix<nahx, nahx, DType> Q;
-    Matrix<mhx, mhx, DType> R;
+    DiagonalMatrix<nahx, DType> Q;
+    DiagonalMatrix<mhx, DType> R;
 
     build_weight_matrices(Q, R, Q_, Qf_, R_);
 
     Serial.print("free memory after building controller weights: ");
     Serial.println(freeMemory());
 
-    // // QP in terms of relative controls is defined via state augmentation
+    // QP in terms of relative controls is defined via state augmentation
     Matrix<na, na, DType> Aaug; 
     Matrix<na,  m, DType> Baug;
 
@@ -244,7 +241,7 @@ CondensedMPC<n, m, hx, DType>::CondensedMPC(const LTIModel<n, m, DType>& model_,
     Matrix<nahx,  na, DType> Ap;
     Matrix<nahx, mhx, DType> Bp;
 
-    // // finally the 'augmented' prediction matrices     
+    // finally the 'augmented' prediction matrices     
     build_prediction_matrices(Ap, Bp, Aaug, Baug);
 
     Serial.print("free memory after building prediction matrices: ");

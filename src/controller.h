@@ -54,25 +54,27 @@ class CondensedMPC {
         void update_QP_matrices(const Matrix<na,     1, DType>& x,
                                 const Matrix<nahx,  na, DType>& Ap,
                                 const Matrix<nahx, mhx, DType>& Bp,
-                                const Matrix<nahx,nahx, DType>& Q, 
-                                const Matrix<mhx,  mhx, DType>& R);                             
+                                const DiagonalMatrix<nahx, DType>& Q, 
+                                const DiagonalMatrix<mhx, DType>& R);                             
 
         void build_prediction_matrices(Matrix<nahx,  na, DType>& Ap, 
                                        Matrix<nahx, mhx, DType>& Bp, 
                                        const Matrix<na, na, DType>& Aaug, 
                                        const Matrix<na,  m, DType>& Baug);
 
-        void build_weight_matrices(Matrix<nahx, nahx, DType>& Q, 
-                                   Matrix<mhx,   mhx, DType>& R, 
+        void build_weight_matrices(DiagonalMatrix<nahx, DType>& Q, 
+                                   DiagonalMatrix<mhx, DType>& R, 
                                    const Matrix<n, 1, DType>& Q_,
                                    const Matrix<n, 1, DType>& Qf_,
                                    const Matrix<m, 1, DType>& R_);                                   
 
 
         Matrix<nahx, 1, DType> xref; 
+        
         // State space matrices 
         Matrix<n,n,DType> A;
         Matrix<n,m,DType> B;
+
         Matrix<mhx, mhx, DType> P;
         Matrix<mhx,   1, DType> q;
         QP<mhx,0,0,DType>* QuadProg;
