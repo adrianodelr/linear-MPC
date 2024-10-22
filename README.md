@@ -28,13 +28,13 @@ $$
 The prediction matrix  
 
 $$
-    \underset{\rightarrow k}{\mathbf{e}} =
-    \begin{bmatrix}
-    \boldsymbol{r}_{k+1} \\
-    \boldsymbol{r}_{k+2} \\
-    \vdots \\
-    \boldsymbol{r}_{k+n_y}
-    \end{bmatrix}
+\underset{\rightarrow k}{\mathbf{e}} =
+\begin{bmatrix}
+\boldsymbol{r}_{k+1} \\
+\boldsymbol{r}_{k+2} \\
+\vdots \\
+\boldsymbol{r}_{k+n_y}
+\end{bmatrix}
 $$
 
 <!-- % -         
