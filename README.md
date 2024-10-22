@@ -19,8 +19,9 @@ $$
 
 
 ### TEST FUTURE ERROR
+Some rendering tests
 $$ 
-\underset{\rightarrow}{\mathbf{e}}_{k} 
+\underset{\rightarrow k}{\mathbf{e}} 
 $$
 <!-- TEST FUTURE ERROR as command
 $$
