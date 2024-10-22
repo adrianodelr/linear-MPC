@@ -1,4 +1,3 @@
-
 #pragma once
 
 #include <Arduino.h> 
@@ -6,68 +5,90 @@
 #include "model.h"
 #include "ALQPSolver.h"
 
-using namespace BLA;
+
 using namespace ALQPS;
+
+const QPparams params_default;
 
 namespace LMPC {
 
-template<int m, int n, int k, int p, typename DType = float>
-void insert_at(Matrix<m, n, DType>& M, const Matrix<k, p, DType>& SubM, int row, int col);
- 
-template <int n, typename DType = float>
-struct DiagonalMatrix : public MatrixBase<DiagonalMatrix<n>, n, n, DType> {
-    Matrix<n, 1, DType> diagonal;
-
-    DiagonalMatrix();
-
-    DiagonalMatrix(const Matrix<n, 1, DType>& diag);
-
-    BLA::Matrix<n, n, DType> toMatrix() const; 
-
-    DType operator()(int row, int col) const;  
-};
-
-template<int n, int m, int hx, typename DType = float>
-class CondensedMPC {
+// linear MPC class
+template<int n, int m, int hx, int pu = 0, int px = 0, typename DType = float>
+class lMPC {
     public: 
-        static constexpr int na = static_cast<int>(n+m);
-        static constexpr int nahx = static_cast<int>(na*hx);
-        static constexpr int mhx = static_cast<int>(m*hx);
+        static constexpr int na = n+m;
+        static constexpr int nahx = na*hx;
+        static constexpr int nhx = n*hx;        
+        static constexpr int mhx = m*hx;
+        static constexpr int phx = (px+pu)*hx;
  
-        CondensedMPC(const LTIModel<n, m, DType>& model_,
-                     const Matrix<n, 1, DType>& Q_,
-                     const Matrix<n, 1, DType>& Qf_,
-                     const Matrix<m, 1, DType>& R_,
-                     const Matrix<n, 1, DType>& xref_); 
+        lMPC(const LTIModel<n, m, DType>& model_,
+            const Matrix<n, 1, DType>& Q_,
+            const Matrix<n, 1, DType>& Qf_,
+            const Matrix<m, 1, DType>& R_,
+            const Matrix<n, 1, DType>& xref_,
+            const QPparams params = params_default);
 
-        // destructor
-        ~CondensedMPC(){
-            if(alloc) {
-                delete QuadProg;
-            }
-        }
+        lMPC(const LTIModel<n, m, DType>& model_,
+            const Matrix<n, 1, DType>& Q_,
+            const Matrix<n, 1, DType>& Qf_,
+            const Matrix<m, 1, DType>& R_,
+            const Matrix<n, 1, DType>& xref_,
+            const Constraints<n, m, pu, px, DType>& con,
+            const QPparams params = params_default);
 
-        Matrix<mhx,mhx,DType> get_P();
-        Matrix<mhx,1,DType> get_q();        
 
-    private: 
-        void update_QP_matrices(const Matrix<na,     1, DType>& x,
-                                const Matrix<nahx,  na, DType>& Ap,
-                                const Matrix<nahx, mhx, DType>& Bp,
-                                const DiagonalMatrix<nahx, DType>& Q, 
-                                const DiagonalMatrix<mhx, DType>& R);                             
+        Matrix<m, 1, DType> get_control(const Matrix<n,1, DType>& x); 
+
+    private:                              
 
         void build_prediction_matrices(Matrix<nahx,  na, DType>& Ap, 
-                                       Matrix<nahx, mhx, DType>& Bp, 
+                                       BlockLowerTriangularToeplitzMatrix<na, m, hx, DType>& Bp, 
                                        const Matrix<na, na, DType>& Aaug, 
                                        const Matrix<na,  m, DType>& Baug);
 
-        void build_weight_matrices(DiagonalMatrix<nahx, DType>& Q, 
-                                   DiagonalMatrix<mhx, DType>& R, 
-                                   const Matrix<n, 1, DType>& Q_,
-                                   const Matrix<n, 1, DType>& Qf_,
-                                   const Matrix<m, 1, DType>& R_);                                   
+        void build_prediction_matrices(Matrix<nhx,  n, DType>& Ap, 
+                                       BlockLowerTriangularToeplitzMatrix<n, m, hx, DType>& Bp, 
+                                       const Matrix<n, n, DType>& A, 
+                                       const Matrix<n, m, DType>& B);
+        
+        void initialize_objective();
 
+        void update_objective(const Matrix<n, 1, DType>& x);
+
+        void initialize_constraints();
+        
+        void update_constraints(const Matrix<n,1,DType>& x);
+
+        void initialize_state_constraints(int& abs_index, 
+                                          int rel_index_start, 
+                                          int rel_index_end, 
+                                          const Matrix<n+n,1>& h_const_part,
+                                          const Matrix<nhx, mhx, DType>& G_const_part,
+                                          Matrix<phx,mhx,DType>& G);
+
+        void update_state_constraints(int& abs_index, 
+                                      int rel_index_start, 
+                                      int rel_index_end, 
+                                      const Matrix<nhx,1>& h_offset,
+                                      Matrix<phx,1,DType>& h);
+
+        void initialize_input_constraints(int& abs_index, 
+                                          int rel_index_start, 
+                                          int rel_index_end, 
+                                          const Matrix<m+m,1>& h_const_part,
+                                          const Matrix<mhx, mhx, DType>& G_const_part,
+                                          Matrix<phx,mhx,DType>& G);
+
+        void update_input_constraints(int& abs_index, 
+                                      int rel_index_start, 
+                                      int rel_index_end, 
+                                      const Matrix<m,1,DType>& h_offset,
+                                      Matrix<phx,1,DType>& h);
+
+        void state_augmentation(Matrix<n,n,DType>& A, const Matrix<n,m,DType>& B);
+
+        bool debugging; 
 
         Matrix<nahx, 1, DType> xref; 
         
@@ -75,11 +96,33 @@ class CondensedMPC {
         Matrix<n,n,DType> A;
         Matrix<n,m,DType> B;
 
-        Matrix<mhx, mhx, DType> P;
-        Matrix<mhx,   1, DType> q;
-        QP<mhx,0,0,DType>* QuadProg;
-        bool alloc;
+        // Augmented state space matrices
+        Matrix<na, na, DType> Aaug; 
+        Matrix<na,  m, DType> Baug;
 
+        // Controller weights
+        Matrix<n, 1, DType> Q;
+        Matrix<n, 1, DType> Qf;
+        Matrix<m, 1, DType> R;
+
+        // controls at current operational point 
+        Matrix<m,1,DType> u_op;
+
+        // limits on states and controls
+        Matrix<m+m,1> _limits_u;
+        Matrix<n+n,1> _limits_x;        
+        
+        // prediction matrices for unaugmented state (used for constraint assembly)
+        Matrix<nhx,  n, DType> Ap_c;
+        BlockLowerTriangularToeplitzMatrix<n, m, hx, DType> Bp_c;
+        Matrix<phx,1,DType> h_const;
+
+        // prediction matrices for augmented state (used for cost function assembly)
+        Matrix<nahx,  na, DType> Ap;
+        Matrix<mhx,nahx, DType> Bp_scaled;
+
+        QP<mhx,0,phx,DType> QuadProg;
+    
 };                        
 
 }
