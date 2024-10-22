@@ -22,7 +22,7 @@ TEST FUTURE ERROR
 $$
 \underset{\rightarrow}{\boldsymbol{e}}_{k}
 $$
-TEST FUTURE ERROR as command
+<!-- TEST FUTURE ERROR as command
 $$
 \newcommand{\efutr}[1] {\underset{\rightarrow}{\boldsymbol{e}}_{#1}}
 $$
@@ -36,6 +36,6 @@ $$
 \vdots \\
 \boldsymbol{e}_{k+n} \\
 \end{bmatrix}
-$$
+$$ -->
 
 
