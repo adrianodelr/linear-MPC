@@ -32,15 +32,22 @@ $$
 $$
 
 new line   
+```math
+  \begin{bmatrix} 
+    X \\ 
+    Y 
+  \end{bmatrix}
+```
 
-$$
+
+```math
 \begin{bmatrix}
-\boldsymbol{r}_{k+1} \\\
-\boldsymbol{r}_{k+2} \\\
-\vdots \\\
+\boldsymbol{r}_{k+1} \\
+\boldsymbol{r}_{k+2} \\
+\vdots \\
 \boldsymbol{r}_{k+n_y}
 \end{bmatrix}
-$$
+```
 
 <!-- % -         
 % \underbrace{\begin{bmatrix}
