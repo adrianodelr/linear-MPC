@@ -19,7 +19,8 @@ $$
 
 
 ### TEST FUTURE ERROR
-Some rendering tests
+Some rendering tests  
+
 $$ 
 \underset{\rightarrow k}{\mathbf{e}} 
 $$
