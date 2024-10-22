@@ -39,6 +39,7 @@ new line
   \end{bmatrix}
 ```
 
+newer line  
 
 ```math
 \begin{bmatrix}
@@ -48,6 +49,10 @@ new line
 \boldsymbol{r}_{k+n_y}
 \end{bmatrix}
 ```
+
+newest line  
+
+$\begin{bmatrix}a & b\\c & d\end{bmatrix}$
 
 <!-- % -         
 % \underbrace{\begin{bmatrix}
