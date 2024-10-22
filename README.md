@@ -30,7 +30,8 @@ The prediction matrix
 $$
 \underset{\rightarrow k}{\mathbf{e}} =
 $$
-new line  
+
+new line   
 
 $$
 \begin{bmatrix}
