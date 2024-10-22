@@ -42,12 +42,12 @@ new line
 newer line  
 
 ```math
-\begin{bmatrix}
+\underbrace{\begin{bmatrix}
 \boldsymbol{r}_{k+1} \\
 \boldsymbol{r}_{k+2} \\
 \vdots \\
 \boldsymbol{r}_{k+n_y}
-\end{bmatrix}
+\end{bmatrix}}_\text{$\boldsymbol{\bar{A}}$}
 ```
 
 newest line  
