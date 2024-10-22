@@ -9,14 +9,33 @@ future state variables are eliminated from the search space of the optimization,
 are implicity satisfied at the optimum. Instead formulation the optimization problem in terms of absolute controls, this implementation uses control increments. The book of J.A. Rossiter [A First Course in Predictive Control](https://api.pageplace.de/preview/DT0400.9781351597166_A35143461/preview-9781351597166_A35143461.pdf) explains all these concepts for beginners. However, for completeness, below the basics are layed out.   
 
 ## MPC formulation
-$$\begin{align}
+$$
+\begin{align}
 \min_{\mathbf{x}} \quad & \frac{1}{2}\mathbf{x}^T\mathbf{Q}\mathbf{x} + \mathbf{q}^T\mathbf{x} \\ 
 \mbox{s.t.}\quad &  \mathbf{A}\mathbf{x} -\mathbf{b} = \mathbf{0} \\ 
-&  \mathbf{G}\mathbf{x} - \boldsymbol{h} \leq \boldsymbol{0} 
-\end{align}$$
+&  \mathbf{G}\mathbf{x} - \mathbf{h} \leq \mathbf{0} 
+\end{align}
+$$
 
 
+TEST FUTURE ERROR
+$$
+\underset{\rightarrow}{\boldsymbol{e}}_{k}
+$$
+TEST FUTURE ERROR as command
+$$
+\newcommand{\efutr}[1] {\underset{\rightarrow}{\boldsymbol{e}}_{#1}}
+$$
 
-
+test of future vector format
+$$
+\efutr{k}  = 
+\begin{bmatrix}
+\boldsymbol{e}_{k+1} \\
+\boldsymbol{e}_{k+2} \\
+\vdots \\
+\boldsymbol{e}_{k+n} \\
+\end{bmatrix}
+$$
 
 
