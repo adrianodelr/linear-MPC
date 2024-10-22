@@ -37,17 +37,17 @@ $$
     \end{bmatrix}}_\text{$\underset{\rightarrow k}{\boldsymbol{r}}$}
     -         
     \underbrace{\begin{bmatrix}
-    \A \\
-    \A^2 \\
+    \mathbf{A} \\
+    \mathbf{A}^2 \\
     \vdots \\
-    \A^{n_y}
+    \mathbf{A}^{n_y}
     \end{bmatrix}}_\text{$\boldsymbol{\bar{A}}$}
-    \bxk{k} -
+    \mathbf{x}_{k} -
     \underbrace{\begin{bmatrix}
-    \B & \mathbf{0} & \mathbf{0} & \cdots   \\
-    \A\B & \B & \mathbf{0} & \cdots\\
+    \mathbf{B} & \mathbf{0} & \mathbf{0} & \cdots   \\
+    \mathbf{A}\mathbf{B} & \mathbf{B} & \mathbf{0} & \cdots\\
     \vdots & \vdots & \vdots & \ddots\\
-    \A^{n_y-1}\B & \A^{n_y-2}\B & \A^{n_y-3}\B & \vdots\\
+    \mathbf{A}^{n_y-1}\mathbf{B} & \mathbf{A}^{n_y-2}\mathbf{B} & \mathbf{A}^{n_y-3}\mathbf{B} & \vdots\\
     \end{bmatrix}}_\text{$\boldsymbol{\bar{B}}$}
     \underbrace{\begin{bmatrix}
     \boldsymbol{r}_{k} \\
