@@ -39,6 +39,7 @@ Matrix<m, 1, DType> lMPC<n, m, hx, pu, px, DType>::get_control(const Matrix<n,1,
     
     auto sol_obj = QuadProg.solve();     
 
+    // extract first control element 
     Matrix<m, 1, DType> Delta_u; 
     for (int i = 0; i < m; i++){
         Delta_u(i,0) = sol_obj.x(i,0);
@@ -57,7 +58,7 @@ void lMPC<n, m, hx, pu, px, DType>::update_objective(const Matrix<n, 1, DType>& 
     QuadProg.update_q(Bp_scaled*(Ap*(x && u_op) - xref));        
 }
 
-
+// pass quadratic cost matrix to solver
 template<int n, int m, int hx, int pu, int px, typename DType>
 void lMPC<n, m, hx, pu, px, DType>::initialize_objective(){
     // build the augmented prediction matrices     
@@ -146,7 +147,7 @@ void lMPC<n, m, hx, pu, px, DType>::build_prediction_matrices(Matrix<nhx, n, DTy
     } 
 }
 
-
+// pass linear inequality constraint term to solver
 template<int n, int m, int hx, int pu, int px, typename DType>
 void lMPC<n, m, hx, pu, px, DType>::update_constraints(const Matrix<n,1,DType>& x){
 
@@ -181,10 +182,10 @@ void lMPC<n, m, hx, pu, px, DType>::update_constraints(const Matrix<n,1,DType>& 
 
 template<int n, int m, int hx, int pu, int px, typename DType>
 void lMPC<n, m, hx, pu, px, DType>::update_state_constraints(int& abs_index, 
-                                                                    int rel_index_start, 
-                                                                    int rel_index_end, 
-                                                                    const Matrix<nhx,1>& h_offset,
-                                                                    Matrix<phx,1,DType>& h){
+                                                             int rel_index_start, 
+                                                             int rel_index_end, 
+                                                             const Matrix<nhx,1>& h_offset,
+                                                             Matrix<phx,1,DType>& h){
     int ncount = rel_index_start;
     for (int i=0; i < nhx; i++){
         if (!isnan(_limits_x(ncount,0))){
@@ -200,10 +201,10 @@ void lMPC<n, m, hx, pu, px, DType>::update_state_constraints(int& abs_index,
 
 template<int n, int m, int hx, int pu, int px, typename DType>
 void lMPC<n, m, hx, pu, px, DType>::update_input_constraints(int& abs_index, 
-                                                                    int rel_index_start, 
-                                                                    int rel_index_end, 
-                                                                    const Matrix<m,1,DType>& h_offset,
-                                                                    Matrix<phx,1,DType>& h){          
+                                                             int rel_index_start, 
+                                                             int rel_index_end, 
+                                                             const Matrix<m,1,DType>& h_offset,
+                                                             Matrix<phx,1,DType>& h){          
     int mcount = rel_index_start;
     for (int i=0; i < mhx; i++){
         if (!isnan(_limits_u(mcount,0))){
@@ -243,11 +244,11 @@ void lMPC<n, m, hx, pu, px, DType>::initialize_state_constraints(int& abs_index,
 
 template<int n, int m, int hx, int pu, int px, typename DType>
 void lMPC<n, m, hx, pu, px, DType>::initialize_input_constraints(int& abs_index, 
-                                                                        int rel_index_start, 
-                                                                        int rel_index_end, 
-                                                                        const Matrix<m+m,1>& h_const_part,
-                                                                        const Matrix<mhx, mhx, DType>& G_const_part,
-                                                                        Matrix<phx,mhx,DType>& G){
+                                                                 int rel_index_start, 
+                                                                 int rel_index_end, 
+                                                                 const Matrix<m+m,1>& h_const_part,
+                                                                 const Matrix<mhx, mhx, DType>& G_const_part,
+                                                                 Matrix<phx,mhx,DType>& G){
                                     
     int mcount = rel_index_start;
     for (int i=0; i < mhx; i++){
@@ -265,6 +266,7 @@ void lMPC<n, m, hx, pu, px, DType>::initialize_input_constraints(int& abs_index,
     }
 }
 
+// pass quadratic inequality constraint matrix to solver
 template<int n, int m, int hx, int pu, int px, typename DType>
 void lMPC<n, m, hx, pu, px, DType>::initialize_constraints(){
     Matrix<phx,mhx,DType> G;
@@ -294,7 +296,7 @@ void lMPC<n, m, hx, pu, px, DType>::initialize_constraints(){
         initialize_state_constraints(rcount_total, n, n+n-1, -_limits_x, -Bp_CDelta, G);
     }
 
-    // update static constraint matrix 
+    // update static quadratic constraint matrix 
     QuadProg.update_G(G);
 }
 
