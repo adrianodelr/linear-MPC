@@ -35,25 +35,25 @@ $$
     \vdots \\
     \boldsymbol{r}_{k+n_y}
     \end{bmatrix}}_\text{$\underset{\rightarrow k}{\boldsymbol{r}}$}
-    -         
-    \underbrace{\begin{bmatrix}
-    \mathbf{A} \\
-    \mathbf{A}^2 \\
-    \vdots \\
-    \mathbf{A}^{n_y}
-    \end{bmatrix}}_\text{$\boldsymbol{\bar{A}}$}
-    \mathbf{x}_{k} -
-    \underbrace{\begin{bmatrix}
-    \mathbf{B} & \mathbf{0} & \mathbf{0} & \cdots   \\
-    \mathbf{A}\mathbf{B} & \mathbf{B} & \mathbf{0} & \cdots\\
-    \vdots & \vdots & \vdots & \ddots\\
-    \mathbf{A}^{n_y-1}\mathbf{B} & \mathbf{A}^{n_y-2}\mathbf{B} & \mathbf{A}^{n_y-3}\mathbf{B} & \vdots\\
-    \end{bmatrix}}_\text{$\boldsymbol{\bar{B}}$}
-    \underbrace{\begin{bmatrix}
-    \boldsymbol{r}_{k} \\
-    \boldsymbol{r}_{k+1} \\
-    \vdots \\
-    \boldsymbol{r}_{k+n_y-1}
-    \end{bmatrix}}_\text{$\underset{\rightarrow k}{\boldsymbol{r}}$}
+    % -         
+    % \underbrace{\begin{bmatrix}
+    % \mathbf{A} \\
+    % \mathbf{A}^2 \\
+    % \vdots \\
+    % \mathbf{A}^{n_y}
+    % \end{bmatrix}}_\text{$\boldsymbol{\bar{A}}$}
+    % \mathbf{x}_{k} -
+    % \underbrace{\begin{bmatrix}
+    % \mathbf{B} & \mathbf{0} & \mathbf{0} & \cdots   \\
+    % \mathbf{A}\mathbf{B} & \mathbf{B} & \mathbf{0} & \cdots\\
+    % \vdots & \vdots & \vdots & \ddots\\
+    % \mathbf{A}^{n_y-1}\mathbf{B} & \mathbf{A}^{n_y-2}\mathbf{B} & \mathbf{A}^{n_y-3}\mathbf{B} & \vdots\\
+    % \end{bmatrix}}_\text{$\boldsymbol{\bar{B}}$}
+    % \underbrace{\begin{bmatrix}
+    % \boldsymbol{r}_{k} \\
+    % \boldsymbol{r}_{k+1} \\
+    % \vdots \\
+    % \boldsymbol{r}_{k+n_y-1}
+    % \end{bmatrix}}_\text{$\underset{\rightarrow k}{\boldsymbol{r}}$}
 $$
 
