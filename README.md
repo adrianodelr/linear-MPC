@@ -6,7 +6,7 @@ The MPC architecture is based on a [condensed QP formulation](https://citeseerx.
 discrete time dynamic equations (here our state space model), which naturally are linear equality constraints
 to be satisfied during the optimization, are substituted into the quadratic cost function. As a consequence,
 future state variables are eliminated from the search space of the optimization, and the equality constraints
-are implicity satisfied at the optimum. Instead formulation the optimization problem in terms of absolute controls, this implementation uses control increments. The book of J.A. Rossiter [A First Course in Predictive Control](https://api.pageplace.de/preview/DT0400.9781351597166_A35143461/preview-9781351597166_A35143461.pdf) explains all these concepts for beginners. However, for completeness, below the basics are layed out.   
+are implicity satisfied at the optimum. Instead formulation the optimization problem in terms of absolute controls, this implementation uses control increments. The book of J.A. Rossiter [A First Course in Predictive Control](https://api.pageplace.de/preview/DT0400.9781351597166_A35143461/preview-9781351597166_A35143461.pdf) explains all these concepts for beginners. However, for completeness, the most important mathematics are layed out at the end of the readme.   
 
 ## MPC formulation
 $$
@@ -23,21 +23,37 @@ Some rendering tests
 
 $$ 
 \underset{\rightarrow k}{\mathbf{e}} 
-$$
-<!-- TEST FUTURE ERROR as command
-$$
-\newcommand{\efutr}[1] {\underset{\rightarrow}{\boldsymbol{e}}_{#1}}
-$$
+$$  
 
-test of future vector format
-$$
-\efutr{k}  = 
-\begin{bmatrix}
-\boldsymbol{e}_{k+1} \\
-\boldsymbol{e}_{k+2} \\
-\vdots \\
-\boldsymbol{e}_{k+n} \\
-\end{bmatrix}
-$$ -->
+The prediction matrix  
 
+$$
+    \underset{\rightarrow k}{\mathbf{e}} =
+    \underbrace{\begin{bmatrix}
+    \boldsymbol{r}_{k+1} \\
+    \boldsymbol{r}_{k+2} \\
+    \vdots \\
+    \boldsymbol{r}_{k+n_y}
+    \end{bmatrix}}_\text{$\underset{\rightarrow k}{\boldsymbol{r}}$}
+    -         
+    \underbrace{\begin{bmatrix}
+    \A \\
+    \A^2 \\
+    \vdots \\
+    \A^{n_y}
+    \end{bmatrix}}_\text{$\boldsymbol{\bar{A}}$}
+    \bxk{k} -
+    \underbrace{\begin{bmatrix}
+    \B & \mathbf{0} & \mathbf{0} & \cdots   \\
+    \A\B & \B & \mathbf{0} & \cdots\\
+    \vdots & \vdots & \vdots & \ddots\\
+    \A^{n_y-1}\B & \A^{n_y-2}\B & \A^{n_y-3}\B & \vdots\\
+    \end{bmatrix}}_\text{$\boldsymbol{\bar{B}}$}
+    \underbrace{\begin{bmatrix}
+    \boldsymbol{r}_{k} \\
+    \boldsymbol{r}_{k+1} \\
+    \vdots \\
+    \boldsymbol{r}_{k+n_y-1}
+    \end{bmatrix}}_\text{$\underset{\rightarrow k}{\boldsymbol{r}}$}
+$$
 
