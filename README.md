@@ -12,7 +12,7 @@ are implicity satisfied at the optimum. Instead formulation the optimization pro
 $$\begin{align}
 \min_{\mathbf{x}} \quad & \frac{1}{2}\mathbf{x}^T\mathbf{Q}\mathbf{x} + \mathbf{q}^T\mathbf{x} \\ 
 \mbox{s.t.}\quad &  \mathbf{A}\mathbf{x} -\mathbf{b} = \mathbf{0} \\ 
-&  \mathbf{G}\mathbf{x} - \mathbf{h} \leq \mathbf{0} 
+&  \mathbf{G}\mathbf{x} - \bm{h} \leq \bm{0} 
 \end{align}$$
 
 
