@@ -52,7 +52,7 @@ newer line
 
 newest line  
 
-$\begin{bmatrix}a & b\\c & d\end{bmatrix}$
+$\begin{bmatrix}a & b\\ c & d\end{bmatrix}$
 
 <!-- % -         
 % \underbrace{\begin{bmatrix}
