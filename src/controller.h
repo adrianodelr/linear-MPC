@@ -23,14 +23,6 @@ class lMPC {
         static constexpr int mhx = m*hx;
         static constexpr int phx = (px+pu)*hx;
 
-        // unconstrained MPC 
-        lMPC(const LTIModel<n, m, DType>& model_,
-            const Matrix<n, 1, DType>& Q_,
-            const Matrix<n, 1, DType>& Qf_,
-            const Matrix<m, 1, DType>& R_,
-            const Matrix<n, 1, DType>& xref_,
-            const QPparams params = params_default);
-
         // constrained MPC 
         lMPC(const LTIModel<n, m, DType>& model_,
             const Matrix<n, 1, DType>& Q_,
@@ -40,15 +32,27 @@ class lMPC {
             const Constraints<n, m, pu, px, DType>& con,
             const QPparams params = params_default);
 
+        // unconstrained MPC 
+        lMPC(const LTIModel<n, m, DType>& model_,
+            const Matrix<n, 1, DType>& Q_,
+            const Matrix<n, 1, DType>& Qf_,
+            const Matrix<m, 1, DType>& R_,
+            const Matrix<n, 1, DType>& xref_,
+            const QPparams params = params_default);
+
         Matrix<m, 1, DType> get_control(const Matrix<n,1, DType>& x); 
 
-    private:                              
+    private:
+        // adapt state and control matrix to augmented state 
+        void state_augmentation(Matrix<n,n,DType>& A, const Matrix<n,m,DType>& B);
 
+        // build prediction matrices for future augmented state prediction
         void build_prediction_matrices(Matrix<nahx,  na, DType>& Ap, 
                                        BlockLowerTriangularToeplitzMatrix<na, m, hx, DType>& Bp, 
                                        const Matrix<na, na, DType>& Aaug, 
                                        const Matrix<na,  m, DType>& Baug);
 
+        // build prediction matrices for future state prediction
         void build_prediction_matrices(Matrix<nhx,  n, DType>& Ap, 
                                        BlockLowerTriangularToeplitzMatrix<n, m, hx, DType>& Bp, 
                                        const Matrix<n, n, DType>& A, 
@@ -91,8 +95,6 @@ class lMPC {
                                       int rel_index_end, 
                                       const Matrix<m,1,DType>& h_offset,
                                       Matrix<phx,1,DType>& h);
-
-        void state_augmentation(Matrix<n,n,DType>& A, const Matrix<n,m,DType>& B);
 
         // enable printing free memory 
         bool debugging; 
