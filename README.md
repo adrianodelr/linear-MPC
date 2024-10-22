@@ -78,7 +78,7 @@ The unconstrained quadratic objective can be written by using a sum notation, as
 
 ```
 
-Here, $\mathbf{e}_k$ $=\mathbf{r}-\mathbf{x}$ is the difference between the desired reference and the predicted state at time step $k$; and $\mathbf{u}_{k}$ the control vector applied to the system. The diagonal matrices $\mathbf{Q}$ and $\mathbf{R}$ are used to determine 
+Here, $\mathbf{e}$<sub>$k$</sub> $=\mathbf{r}$<sub>$k$</sub> $-\mathbf{x}$<sub>$k$</sub> is the difference between the desired reference and the predicted state at time step $k$; and $\mathbf{u}_{k}$ the control vector applied to the system. The diagonal matrices $\mathbf{Q}$ and $\mathbf{R}$ are used to determine 
 how much emphasis is put on reference tracking and control effort used for the tracking, respectively. The tracking error term at the last time step $N$ (= length of the prediction horizon) is taken out of the sum, as it is often set a bit higher to put more emphasis on the terminal state.  
 
 For building a controller, only the diagonal terms of the weight matrices have to be specified. 
