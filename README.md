@@ -52,7 +52,16 @@ newer line
 
 newest line  
 
-$$\begin{bmatrix} a & b \\\ c & d \end{bmatrix}$$
+$$\begin{bmatrix} a & b \\\ c & d \end{bmatrix}$$  
+
+
+$$\begin{bmatrix}
+\boldsymbol{r}_{k+1} \\\
+\boldsymbol{r}_{k+2} \\\
+\vdots \\\
+\boldsymbol{r}_{k+n_y}
+\end{bmatrix}$$
+
 
 <!-- % -         
 % \underbrace{\begin{bmatrix}
