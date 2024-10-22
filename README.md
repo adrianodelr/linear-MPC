@@ -19,9 +19,7 @@ $$
 
 
 TEST FUTURE ERROR
-$$
-\underset{\rightarrow}{\boldsymbol{e}}_{k}
-$$
+$$ \underset{\rightarrow}{\boldsymbol{e}}_{k} $$
 <!-- TEST FUTURE ERROR as command
 $$
 \newcommand{\efutr}[1] {\underset{\rightarrow}{\boldsymbol{e}}_{#1}}
