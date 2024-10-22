@@ -34,7 +34,7 @@ $$
     \boldsymbol{r}_{k+2} \\
     \vdots \\
     \boldsymbol{r}_{k+n_y}
-    \end{bmatrix}}_\text{$\underset{\rightarrow k}{\boldsymbol{r}}$}
+    \end{bmatrix}}_\text{test}
 $$
 
 <!-- % -         
