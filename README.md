@@ -36,21 +36,92 @@ Matrix<n,m,float> B = {0.0009998333444440899,0.19993333999968252};
 auto model = LTIModel<n, m, float> (A, B); 
 ```
 ### Define constraints (optional) 
-Constraints can be used to reflect physical limits of the system. However, this increases computational time and can lead to a shortage of RAM. Limits can be set partically, on individual components of the state or the control vector. Upper and lower limits are stacked together 
+Constraints can be used to reflect physical limits of the system. However, this increases computational time and can lead to a shortage of RAM. Limits can be set partically, on individual components of the state or the control vector. 
+Upper and lower limits on controls are stacked together in a vector twice the size of the control vector in ascending order of vector element, i.e. 
+
+```math
+    u_\text{limits} = \begin{bmatrix} u_{1max}, &  u_{2max}, & \dots & u_{m\; max}, &  u_{1min}, &  u_{2min}, &  \dots & u_{m \; min}\end{bmatrix}
+```
+Same holds for limits on the states
+```math
+    x_\text{limits} = \begin{bmatrix} x_{1max}, &  x_{2max}, & \dots & x_{n\; max}, &  x_{1min}, &  x_{2min}, &  \dots & x_{n \; min}\end{bmatrix}
+```
+To set partial limits, only on certain components of state or control vector, the according value in the vector of limits is set to `NaN`, which can be achieved zero division, i.e. `0.0/0.0`. It is of utmost importance to correctly specify the number of constraints per state and control vector. 
+In the example below, $u_{1max} = 10.0$  and $x_{2max} = 15.0$. There is no other limits, thus $u_{1min} = x_{1max} = x_{1min} = x_{2min} = NaN$. Accordingly there is one constraint on the state and one on the controls.   
 
 ```cpp
 // number of constraints 
-const int pu = 1;
-const int px = 1;
+const int pu = 1;       // number of control constraints 
+const int px = 1;       // number of state constraints 
 
-// limits on 
-Matrix<m+m,1,float> ulimits = {10.0,0.0/0.0};
-Matrix<n+n,1,float> xlimits = {0.0/0.0,15,0.0/0.0,0.0/0.0};
+// limit vectors 
+Matrix<m+m,1,float> ulimits = {10.0, 0.0/0.0};
+Matrix<n+n,1,float> xlimits = {0.0/0.0, 15.0, 0.0/0.0, 0.0/0.0};
 
-// build constraint class object
-  auto constr = Constraints<n,m,pu,px,float>(ulimits,xlimits);
+// build constraint object
+auto constr = Constraints<n,m,pu,px,float>(ulimits,xlimits);
 ```
+If there is no limit at all on the states or the controls, one can pass only a single vector to build the constraints object:  
+```cpp
+// build constraint object with only control constraints
+auto constr = Constraints<n,m,pu,0,float>(ulimits);
 
+// OR
+
+// build constraint object with only state constraints
+auto constr = Constraints<n,m,0,px,float>(xlimits);
+```
+### Building a controller 
+The unconstrained quadratic objective can be written by using a sum notation, as
+```math
+    J = \mathbf{e}_{N}^T \mathbf{Q}_{f} \mathbf{e}_{N} + \sum_{k=1}^{N-1} \mathbf{e}_{k}^T \mathbf{Q} \mathbf{e}_{k} + \mathbf{u}_{k}^T \mathbf{R} \mathbf{u}_{k}
+```
+Here $\mathbf{e}_k = \mathbf{r}_k - \mathbf{x}_k$ is the difference between the desired reference and the predicted state at time step $k$; and $\mathbf{u}_{k}$ the control vector applied to the system. The diagonal matrices $\mathbf{Q}$ and $\mathbf{R}$ are used to determine 
+how much emphasis is put on reference tracking and control effort used for the tracking, respectively. The tracking error term at the last time step $N$ (= length of the prediction horizon) is taken out of the sum, as it is often set a bit higher to put more emphasis on the terminal state.  
+
+For building a controller, only the diagonal terms of the weight matrices have to be specified. 
+Additionally the used needs to provide the desired reference $\mathbf{r}_k$. Currently, only setpoint control is supported, thus $\mathbf{r}_k = const$.
+```cpp
+// horizon lenght 
+const int hx = 5;
+
+// Weight matrices 
+Matrix<n,1,float> Q = {15.0,0.2};           // reference tracking weight  
+Matrix<n,1,float> Qf = {15.0,0.2};          // reference tracking weight final
+Matrix<m,1,float> R = {1.0};                // control weight
+
+// desired setpoint/ state
+Matrix<n,1,float> r_k = {10.0,0.0};
+
+// build controller
+// with constraints 
+auto ctrl = lMPC<n,m,hx,pu,px,float>(model, Q, Qf, R, r_k, constr);  
+
+// OR 
+// without constraints
+auto ctrl = lMPC<n,m,hx,0,0,float>(model, Q, Qf, R, r_k);  
+```
+The QP-solver parameters can be accessed via the `QPparams` class which is closer described in the 
+[ALQP-Solver documentation](https://github.com/adrianodelr/ALQP-Solver). The settings can be also useful for debugging purposes, as they allow to print available RAM during solving (along with some information about solver progress):
+```cpp
+// instantiate params object
+QPparams params;
+params.debugging=true;
+  
+auto ctrl = lMPC<n,m,hx,pu,px,float>(model, Q, Qf, R, xref, constr, params);  
+```
+To use the controller in simulation, the `model` can be used: 
+
+```cpp
+Matrix<n,1,float> x = {0,0}; // initial state  
+
+// simulate 15 time steps 
+int Nsim = 15; 
+for (int i = 0; i < Nsim; i++){
+    auto u = ctrl.get_control(x);
+    x = model.simulate_time_step(x, u);
+}
+```
 
 ## MPC formulation
 $$
@@ -60,65 +131,3 @@ $$
 &  \mathbf{G}\mathbf{x} - \mathbf{h} \leq \mathbf{0} 
 \end{align}
 $$
-
-
-### TEST FUTURE ERROR
-Some rendering tests  
-
-$$ 
-\underset{\rightarrow k}{\mathbf{e}} 
-$$  
-
-The prediction matrix  
-
-$$
-\underset{\rightarrow k}{\mathbf{e}} =
-$$
-
-new line   
-```math
-  \begin{bmatrix} 
-    X \\ 
-    Y 
-  \end{bmatrix}
-```
-
-newer line  
-
-```math
-\underbrace{\begin{bmatrix}
-\boldsymbol{r}_{k+1} \\
-\boldsymbol{r}_{k+2} \\
-\vdots \\
-\boldsymbol{r}_{k+n_y}
-\end{bmatrix}}_\text{$\boldsymbol{\bar{A}}$}
-```
-
-newest line  
-
-$$\begin{bmatrix}  \boldsymbol{r}_{k+1} &  \boldsymbol{r}_{k+1} \\\  \boldsymbol{r}_{k+1} &  \boldsymbol{r}_{k+1} \end{bmatrix}$$  
-
-
-$$\begin{bmatrix} \boldsymbol{r}_{k+1} \\\ \boldsymbol{r}_{k+2} \\\ \vdots \\\ \boldsymbol{r}_{k+n_y} \end{bmatrix}$$
-
-
-<!-- % -         
-% \underbrace{\begin{bmatrix}
-% \mathbf{A} \\
-% \mathbf{A}^2 \\
-% \vdots \\
-% \mathbf{A}^{n_y}
-% \end{bmatrix}}_\text{$\boldsymbol{\bar{A}}$}
-% \mathbf{x}_{k} -
-% \underbrace{\begin{bmatrix}
-% \mathbf{B} & \mathbf{0} & \mathbf{0} & \cdots   \\
-% \mathbf{A}\mathbf{B} & \mathbf{B} & \mathbf{0} & \cdots\\
-% \vdots & \vdots & \vdots & \ddots\\
-% \mathbf{A}^{n_y-1}\mathbf{B} & \mathbf{A}^{n_y-2}\mathbf{B} & \mathbf{A}^{n_y-3}\mathbf{B} & \vdots\\
-% \end{bmatrix}}_\text{$\boldsymbol{\bar{B}}$}
-% \underbrace{\begin{bmatrix}
-% \boldsymbol{r}_{k} \\
-% \boldsymbol{r}_{k+1} \\
-% \vdots \\
-% \boldsymbol{r}_{k+n_y-1}
-% \end{bmatrix}}_\text{$\underset{\rightarrow k}{\boldsymbol{r}}$} -->
