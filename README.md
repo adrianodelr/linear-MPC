@@ -2,7 +2,7 @@
 
 This is an easy to use Arduino library for controlling LTI systems in state-space form via Model Predictive Control (MPC). All matrix operations are handled by the [BasicLinearAlgebra library](https://github.com/tomstewart89/BasicLinearAlgebra) and the underlying optimization is done by the [Augmented Lagrangian Quadratic Program (QP) Solver](https://github.com/adrianodelr/ALQP-Solver). 
 
-The MPC architecture is based on a [condensed QP formulation](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=7ff6f36a6ff9a8461b11ea26bcc46a6db38443a6). This means, that the 
+The MPC architecture is based on a condensed QP formulation, see e.g. [here, section 3a)](https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=7ff6f36a6ff9a8461b11ea26bcc46a6db38443a6). This means, that the 
 discrete-time dynamic equations (our state-space model), which are naturally linear equality constraints in the optimization, are substituted into the quadratic cost function. As a result,
 future state variables are eliminated from the optimization search space, and the equality constraints are implicity satisfied. Instead of formulation the optimization problem in terms of absolute controls, this implementation uses **control increments**. The book of J.A. Rossiter [A First Course in Predictive Control](https://api.pageplace.de/preview/DT0400.9781351597166_A35143461/preview-9781351597166_A35143461.pdf) explains all these concepts very thoroughly for beginners. Detailed instructions for using the library are provided below.
 
